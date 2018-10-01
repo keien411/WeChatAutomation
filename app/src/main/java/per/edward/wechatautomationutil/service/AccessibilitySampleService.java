@@ -1,4 +1,4 @@
-package per.edward.wechatautomationutil;
+package per.edward.wechatautomationutil.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;

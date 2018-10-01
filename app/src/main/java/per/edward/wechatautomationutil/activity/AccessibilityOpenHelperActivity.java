@@ -1,4 +1,4 @@
-package per.edward.wechatautomationutil;
+package per.edward.wechatautomationutil.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import per.edward.wechatautomationutil.R;
 import per.edward.wechatautomationutil.utils.AccessibilityUtil;
 
 

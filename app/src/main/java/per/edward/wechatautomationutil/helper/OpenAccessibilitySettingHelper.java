@@ -1,7 +1,9 @@
-package per.edward.wechatautomationutil;
+package per.edward.wechatautomationutil.helper;
 
 import android.content.Context;
 import android.content.Intent;
+
+import per.edward.wechatautomationutil.activity.AccessibilityOpenHelperActivity;
 
 public class OpenAccessibilitySettingHelper {
     private static final String ACTION = "action";

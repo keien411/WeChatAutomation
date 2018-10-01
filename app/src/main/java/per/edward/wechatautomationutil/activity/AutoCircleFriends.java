@@ -1,32 +1,31 @@
-package per.edward.wechatautomationutil;
+package per.edward.wechatautomationutil.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import per.edward.wechatautomationutil.R;
 import per.edward.wechatautomationutil.utils.Constant;
 
 /**
- * 注意事项
- * 1、Android设备必须安装微信app
- * 2、Android Sdk Version
- * <p>
- * Created by Edward on 2018-03-15.
+ * @author keien
+ * @date 2018/10/1
  */
-public class MainActivity extends AppCompatActivity {
+public class AutoCircleFriends extends AppCompatActivity {
     EditText edit, editIndex, editCount;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_auto_circle_friends);
+
         initView();
     }
 
@@ -34,18 +33,14 @@ public class MainActivity extends AppCompatActivity {
         edit = findViewById(R.id.edit);
         editIndex = findViewById(R.id.edit_index);
         editCount = findViewById(R.id.edit_count);
-
-        findViewById(R.id.open_accessibility_setting).setOnClickListener(clickListener);
         findViewById(R.id.btn_save).setOnClickListener(clickListener);
+
     }
 
     View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.open_accessibility_setting:
-                    OpenAccessibilitySettingHelper.jumpToSettingPage(getBaseContext());
-                    break;
                 case R.id.btn_save:
                     saveData();
                     break;
