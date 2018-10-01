@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
@@ -42,6 +43,8 @@ public class AccessibilitySampleService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         final SharedPreferences sharedPreferences = getSharedPreferences(Constant.WECHAT_STORAGE, Activity.MODE_MULTI_PROCESS);
+        int action = sharedPreferences.getInt(Constant.ACTION, 0);
+
         int eventType = event.getEventType();
         LogUtil.e(eventType + "             " + Integer.toHexString(eventType) + "         " + event.getClassName());
 
@@ -58,12 +61,30 @@ public class AccessibilitySampleService extends AccessibilityService {
 
                 if (event.getClassName().equals("com.tencent.mm.ui.LauncherUI")) {//第一次启动app
                     flag = false;
-                    jumpToFind();//进入发现页面
+                    switch (action){
+                        case 0:
+                            jumpToMy();//跳进我的界面
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            jumpToFind();//进入发现页面
+                            break;
+                    }
                 }
 
                 if (event.getClassName().equals("android.widget.FrameLayout")) {//进入发现页面
                     flag = false;
-                    jumpToCircleOfFriends();//进入朋友圈页面
+                    switch (action){
+                        case 0:
+
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            jumpToCircleOfFriends();//进入朋友圈页面
+                            break;
+                    }
                 }
 
                 if (!flag && event.getClassName().equals("com.tencent.mm.plugin.sns.ui.SnsUploadUI")) {
@@ -73,7 +94,6 @@ public class AccessibilitySampleService extends AccessibilityService {
 
                 if (!flag && event.getClassName().equals("com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI")) {
                     LogUtil.e("AlbumPreviewUI 1 "+accessibilityNodeInfo);
-                    LogUtil.e("window 1 "+getWindows().size());
                     LogUtil.e("getSource 1 "+event.getSource());
 
                     if (accessibilityNodeInfo == null){
@@ -92,13 +112,31 @@ public class AccessibilitySampleService extends AccessibilityService {
                     }, TEMP);
                 }
 
+                if (!flag && event.getClassName().equals("com.tencent.mm.plugin.setting.ui.setting.SettingsModifyNameUI")){
+                    String content2 = sharedPreferences.getString(Constant.CONTENTBYNAME, "");
+                    inputContentFinishByName(content2);//修改的名称
+                }
+
                 break;
 
                 case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                    if (!flag){
-                        jumpToCircleOfFriends();
-                        jumpToTakePhoto();
+
+                    switch (action){
+                        case 0:
+                            jumpToPersionMession();//跳进我的信息界面
+                            jumpToPersionName();//跳进昵称界面
+
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            if (!flag){
+                                jumpToCircleOfFriends();
+                                jumpToTakePhoto();
+                            }
+                            break;
                     }
+
 
                     break;
         }
@@ -148,6 +186,73 @@ public class AccessibilitySampleService extends AccessibilityService {
     }
 
     /**
+     * 跳进我的界面
+     */
+    private void jumpToMy() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("我");
+                LogUtil.e("jumpToMy 1 "+list.size());
+                if (list != null && list.size() != 0) {
+                    LogUtil.e("jumpToMy 2");
+                    AccessibilityNodeInfo tempInfo = list.get(0);
+                    if (tempInfo != null && tempInfo.getParent() != null) {
+                        tempInfo.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    }
+                }
+            }
+        }, TEMP);
+    }
+
+    /**
+     * 跳进个人信息界面
+     */
+    private void jumpToPersionMession() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (accessibilityNodeInfo == null){
+                    return;
+                }
+                List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("微信号：");
+                LogUtil.e("jumpToPersionMession 1 "+list.size());
+                if (list != null && list.size() != 0) {
+                    LogUtil.e("jumpToPersionMession 2");
+                    AccessibilityNodeInfo tempInfo = list.get(0);
+                    if (tempInfo != null && tempInfo.getParent() != null) {
+                        tempInfo.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    }
+                }
+            }
+        }, TEMP);
+    }
+
+    /**
+     * 跳进昵称界面
+     */
+    private void jumpToPersionName() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (accessibilityNodeInfo == null){
+                    return;
+                }
+                List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("昵称");
+                LogUtil.e("jumpToPersionMession 1 "+list.size());
+                if (list != null && list.size() != 0) {
+                    LogUtil.e("jumpToPersionMession 2");
+                    AccessibilityNodeInfo tempInfo = list.get(0);
+                    if (tempInfo != null && tempInfo.getParent() != null) {
+                        tempInfo.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                    }
+                }
+            }
+        }, TEMP);
+    }
+
+    /**
      * 跳进拍照分享
      */
     private void jumpToTakePhoto() {
@@ -189,9 +294,21 @@ public class AccessibilitySampleService extends AccessibilityService {
             if (clipboard == null) {
                 return false;
             }
-            clipboard.setPrimaryClip(clip);
-            tempInfo.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
-            tempInfo.performAction(AccessibilityNodeInfo.ACTION_PASTE);
+
+            //粘贴的效果
+//            clipboard.setPrimaryClip(clip);
+//            tempInfo.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
+//            tempInfo.performAction(AccessibilityNodeInfo.ACTION_PASTE);
+
+
+            //直接设置文本 （全选 =》 粘贴的效果）
+            Bundle arguments = new Bundle();
+            arguments.putCharSequence(
+                    AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    contentStr);
+
+            tempInfo.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
+
             return true;
         }
         return false;
@@ -199,6 +316,15 @@ public class AccessibilitySampleService extends AccessibilityService {
 
     private boolean sendMsg() {
         List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("发表");//微信6.6.6版本修改为发表
+        if (performClickBtn(list)) {
+            flag = true;//标记为已发送
+            return true;
+        }
+        return false;
+    }
+
+    private boolean saveMsg() {
+        List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("保存");//微信6.6.6版本修改为发表
         if (performClickBtn(list)) {
             flag = true;//标记为已发送
             return true;
@@ -231,6 +357,33 @@ public class AccessibilitySampleService extends AccessibilityService {
                 AccessibilityNodeInfo tempInfo = nodeInfoList.get(0).getParent().getParent().getParent().getChild(1);//微信6.6.6
                 if (pasteContent(tempInfo, contentStr)) {
                     sendMsg();
+                }
+            }
+        }, TEMP);
+    }
+
+    /**
+     * 修改昵称
+     *
+     * @param contentStr
+     */
+    private void inputContentFinishByName(final String contentStr) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (accessibilityNodeInfo == null) {
+                    return;
+                }
+                List<AccessibilityNodeInfo> nodeInfoList = accessibilityNodeInfo.findAccessibilityNodeInfosByText("好名字可以让你的朋友更容易记住你。");
+                if (nodeInfoList == null ||
+                        nodeInfoList.size() == 0 ||
+                        nodeInfoList.get(0) == null ||
+                        nodeInfoList.get(0).getParent() == null ) {
+                    return;
+                }
+                AccessibilityNodeInfo tempInfo = nodeInfoList.get(0).getParent().getChild(0);//微信6.6.6
+                if (pasteContent(tempInfo, contentStr)) {
+                    saveMsg();
                 }
             }
         }, TEMP);
