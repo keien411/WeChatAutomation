@@ -52,10 +52,12 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.open_accessibility_name:
-                    Toast.makeText(MainActivity.this,"暂未实现",Toast.LENGTH_SHORT).show();
+                    Intent intent2 = new Intent(MainActivity.this,AutoName.class);
+                    startActivity(intent2);
                     break;
                 case R.id.open_accessibility_photo:
-                    Toast.makeText(MainActivity.this,"暂未实现",Toast.LENGTH_SHORT).show();
+                    Intent intent3 = new Intent(MainActivity.this,AutoHeadPhoto.class);
+                    startActivity(intent3);
                     break;
             }
         }

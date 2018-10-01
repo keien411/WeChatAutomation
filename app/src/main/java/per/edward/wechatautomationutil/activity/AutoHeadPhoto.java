@@ -19,22 +19,19 @@ import per.edward.wechatautomationutil.utils.Constant;
  * @author keien
  * @date 2018/10/1
  */
-public class AutoCircleFriends extends AppCompatActivity {
-    EditText edit, editIndex, editCount;
+public class AutoHeadPhoto extends AppCompatActivity {
+    EditText editIndex;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auto_circle_friends);
+        setContentView(R.layout.activity_auto_head_photo);
 
         initView();
     }
 
     private void initView() {
-        edit = findViewById(R.id.edit);
         editIndex = findViewById(R.id.edit_index);
-        editCount = findViewById(R.id.edit_count);
         findViewById(R.id.btn_save).setOnClickListener(clickListener);
-
     }
 
     View.OnClickListener clickListener = new View.OnClickListener() {
@@ -54,16 +51,6 @@ public class AutoCircleFriends extends AppCompatActivity {
             return false;
         }
 
-        if (TextUtils.isEmpty(editCount.getText().toString())) {
-            Toast.makeText(getBaseContext(), "图片总数不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (Integer.valueOf(editCount.getText().toString()) > 9) {
-            Toast.makeText(getBaseContext(), "图片总数不能超过9张", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
         return true;
     }
 
@@ -71,16 +58,12 @@ public class AutoCircleFriends extends AppCompatActivity {
         if (!checkParams()) {
             return;
         }
-
         int index = Integer.valueOf(editIndex.getText().toString());
-        int count = Integer.valueOf(editCount.getText().toString());
 
         SharedPreferences sharedPreferences = getSharedPreferences(Constant.WECHAT_STORAGE, Activity.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constant.CONTENT, edit.getText().toString());
-        editor.putInt(Constant.INDEX, index);
-        editor.putInt(Constant.COUNT, count);
-        editor.putInt(Constant.ACTION, 2);
+        editor.putInt(Constant.INDEXBYPHOTO, index);
+        editor.putInt(Constant.ACTION, 1);
         if (editor.commit()) {
             Toast.makeText(getBaseContext(), "保存成功", Toast.LENGTH_LONG).show();
             openWeChatApplication();//打开微信应用

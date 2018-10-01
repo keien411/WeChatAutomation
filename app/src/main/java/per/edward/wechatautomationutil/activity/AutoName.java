@@ -19,22 +19,19 @@ import per.edward.wechatautomationutil.utils.Constant;
  * @author keien
  * @date 2018/10/1
  */
-public class AutoCircleFriends extends AppCompatActivity {
-    EditText edit, editIndex, editCount;
+public class AutoName extends AppCompatActivity {
+    EditText edit;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auto_circle_friends);
+        setContentView(R.layout.activity_auto_name);
 
         initView();
     }
 
     private void initView() {
         edit = findViewById(R.id.edit);
-        editIndex = findViewById(R.id.edit_index);
-        editCount = findViewById(R.id.edit_count);
         findViewById(R.id.btn_save).setOnClickListener(clickListener);
-
     }
 
     View.OnClickListener clickListener = new View.OnClickListener() {
@@ -49,18 +46,8 @@ public class AutoCircleFriends extends AppCompatActivity {
     };
 
     public boolean checkParams() {
-        if (TextUtils.isEmpty(editIndex.getText().toString())) {
-            Toast.makeText(getBaseContext(), "起始下标不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (TextUtils.isEmpty(editCount.getText().toString())) {
-            Toast.makeText(getBaseContext(), "图片总数不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (Integer.valueOf(editCount.getText().toString()) > 9) {
-            Toast.makeText(getBaseContext(), "图片总数不能超过9张", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(edit.getText().toString())) {
+            Toast.makeText(getBaseContext(), "昵称不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -72,15 +59,11 @@ public class AutoCircleFriends extends AppCompatActivity {
             return;
         }
 
-        int index = Integer.valueOf(editIndex.getText().toString());
-        int count = Integer.valueOf(editCount.getText().toString());
 
         SharedPreferences sharedPreferences = getSharedPreferences(Constant.WECHAT_STORAGE, Activity.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constant.CONTENT, edit.getText().toString());
-        editor.putInt(Constant.INDEX, index);
-        editor.putInt(Constant.COUNT, count);
-        editor.putInt(Constant.ACTION, 2);
+        editor.putString(Constant.CONTENTBYNAME, edit.getText().toString());
+        editor.putInt(Constant.ACTION, 0);
         if (editor.commit()) {
             Toast.makeText(getBaseContext(), "保存成功", Toast.LENGTH_LONG).show();
             openWeChatApplication();//打开微信应用

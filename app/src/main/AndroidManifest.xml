@@ -32,6 +32,12 @@
         <activity
             android:name=".activity.AutoCircleFriends"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".activity.AutoName"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".activity.AutoHeadPhoto"
+            android:launchMode="singleTask" />
 
         <service android:name=".service.AccessibilitySampleService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
