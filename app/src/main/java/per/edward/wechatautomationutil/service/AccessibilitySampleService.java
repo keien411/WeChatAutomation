@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -430,6 +431,7 @@ public class AccessibilitySampleService extends AccessibilityService {
                         accessibilityNodeInfoList.size() == 0 ||
                         accessibilityNodeInfoList.get(0).getParent() == null ||
                         accessibilityNodeInfoList.get(0).getParent().getChildCount() == 0) {
+                    monitor();
                     return;
                 }
                 LogUtil.e("choosePicture 3");
@@ -452,6 +454,33 @@ public class AccessibilitySampleService extends AccessibilityService {
                 performClickBtn(finishList);
             }
         }, TEMP);
+    }
+
+    public void monitor() {
+//        SystemClock.sleep(TEMP);
+//        performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
+        SystemClock.sleep(TEMP);
+        performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
+        againWeixin();
+    }
+
+    /**
+     * 点击系统菜单键，再次进入微信
+     */
+    private void againWeixin() {
+        SystemClock.sleep(TEMP);
+        AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+        LogUtil.e("againWeixin 1 "+nodeInfo);
+        LogUtil.e("againWeixin 3 "+getWindows());
+        if (nodeInfo != null) {
+            List<AccessibilityNodeInfo> infos = nodeInfo.findAccessibilityNodeInfosByViewId("com.android.systemui:id/recents_view");
+            LogUtil.e("againWeixin 2 "+infos);
+            if (infos != null && infos.size() > 0) {
+                AccessibilityNodeInfo clearBtn = infos.get(0).getChild(0);
+                clearBtn.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            }
+            nodeInfo.recycle();
+        }
     }
 
 
