@@ -76,7 +76,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="图片起始下标：" />
+                android:text="头像图片起始下标：" />
 
             <EditText
                 android:id="@+id/edit_index_photo"

@@ -6,40 +6,59 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/open_accessibility_setting"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="打开辅助功能开关" />
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+            <Button
+                android:id="@+id/open_accessibility_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="打开辅助功能开关" />
 
-    <Button
-        android:id="@+id/open_accessibility_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="换昵称" />
+            <Button
+                android:id="@+id/open_accessibility_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="换昵称" />
 
-    <Button
-        android:id="@+id/open_accessibility_photo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="换头像" />
+            <Button
+                android:id="@+id/open_accessibility_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="换头像" />
 
-    <Button
-        android:id="@+id/open_accessibility_circle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="发朋友圈" />
+            <Button
+                android:id="@+id/open_accessibility_circle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="发朋友圈" />
 
-    <Button
-        android:id="@+id/open_all"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="一键发布" />
+            <Button
+                android:id="@+id/open_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="一键发布" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="使用步骤：\n 1.首先打开辅助功能开光 \n 2.关闭微信（等会会自动打开）\n 3.小米手机选择图片的时候会回到任务菜单界面，需要手动点击微信"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:lineSpacingExtra="5dp"/>
+        </LinearLayout>
+    </ScrollView>
+
 
 
 

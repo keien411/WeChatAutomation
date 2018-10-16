@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import per.edward.wechatautomationutil.R;
+import per.edward.wechatautomationutil.utils.ChineseUtils;
 import per.edward.wechatautomationutil.utils.Constant;
 
 /**
@@ -64,7 +65,8 @@ public class AutoAll extends AppCompatActivity {
                     saveData();
                     break;
                 case R.id.bt_rand_name:
-                    Toast.makeText(AutoAll.this,"暂未实现",Toast.LENGTH_SHORT).show();
+                    String name = ChineseUtils.getRandomLengthChiness(2, 5);
+                    editName.setText(name);
                     break;
             }
         }
