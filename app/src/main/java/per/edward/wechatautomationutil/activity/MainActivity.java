@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.open_accessibility_circle).setOnClickListener(clickListener);
         findViewById(R.id.open_accessibility_name).setOnClickListener(clickListener);
         findViewById(R.id.open_accessibility_photo).setOnClickListener(clickListener);
+        findViewById(R.id.open_all).setOnClickListener(clickListener);
     }
 
     View.OnClickListener clickListener = new View.OnClickListener() {
@@ -59,13 +60,12 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent3 = new Intent(MainActivity.this,AutoHeadPhoto.class);
                     startActivity(intent3);
                     break;
+                case R.id.open_all:
+                    Intent intent4 = new Intent(MainActivity.this,AutoAll.class);
+                    startActivity(intent4);
+                    break;
             }
         }
     };
-
-
-
-
-
 
 }

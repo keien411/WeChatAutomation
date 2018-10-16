@@ -34,6 +34,13 @@
         android:layout_marginTop="20dp"
         android:text="发朋友圈" />
 
+    <Button
+        android:id="@+id/open_all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="一键发布" />
+
 
 
 </LinearLayout>
