@@ -21,4 +21,10 @@ public class Constant {
 
     public static final String INDEXBYPHOTO = "index_byPhoto";//修改头像的下标
 
+    public static final int NAME = 0;//昵称
+
+    public static final int HEADPIC = 1;//头像
+
+    public static final int CYCLE = 2;//朋友圈
+
 }

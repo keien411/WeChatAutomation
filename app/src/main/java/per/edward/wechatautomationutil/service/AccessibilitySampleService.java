@@ -15,6 +15,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityWindowInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import per.edward.wechatautomationutil.utils.Constant;
@@ -44,7 +45,7 @@ public class AccessibilitySampleService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         final SharedPreferences sharedPreferences = getSharedPreferences(Constant.WECHAT_STORAGE, Activity.MODE_MULTI_PROCESS);
-        int action = sharedPreferences.getInt(Constant.ACTION, 0);
+        final int action = sharedPreferences.getInt(Constant.ACTION, 0);
 
         int eventType = event.getEventType();
         LogUtil.e(eventType + "             " + Integer.toHexString(eventType) + "         " + event.getClassName());
@@ -67,6 +68,7 @@ public class AccessibilitySampleService extends AccessibilityService {
                             jumpToMy();//跳进我的界面
                             break;
                         case 1:
+                            jumpToMy();//跳进我的界面
                             break;
                         case 2:
                             jumpToFind();//进入发现页面
@@ -74,7 +76,7 @@ public class AccessibilitySampleService extends AccessibilityService {
                     }
                 }
 
-                if (event.getClassName().equals("android.widget.FrameLayout")) {//进入发现页面
+                if (event.getClassName().equals("android.widget.FrameLayout")) {//进入朋友圈页面
                     flag = false;
                     switch (action){
                         case 0:
@@ -104,19 +106,51 @@ public class AccessibilitySampleService extends AccessibilityService {
                         @Override
                         public void run() {
                             if (sharedPreferences != null) {
-                                int index = sharedPreferences.getInt(Constant.INDEX, 0);
-                                int count = sharedPreferences.getInt(Constant.COUNT, 0);
-                                choosePicture(index, count);
-                                LogUtil.e("AlbumPreviewUI 2"+accessibilityNodeInfo);
+
+                                switch (action){
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        int index2 = sharedPreferences.getInt(Constant.INDEXBYPHOTO, 0);
+                                        choosePicture(index2, 1,action);
+                                        break;
+                                    case 2:
+                                        int index = sharedPreferences.getInt(Constant.INDEX, 0);
+                                        int count = sharedPreferences.getInt(Constant.COUNT, 0);
+                                        choosePicture(index, count,action);
+                                        break;
+                                }
+
+//                                LogUtil.e("AlbumPreviewUI 2"+accessibilityNodeInfo);
                             }
                         }
                     }, TEMP);
+                }
+
+                if (!flag && event.getClassName().equals("com.tencent.mm.plugin.setting.ui.setting.SettingsPersonalInfoUI")){
+                    switch (action){
+                        case 0:
+                            jumpToPersionName();//跳进昵称界面
+                            break;
+                        case 1:
+                            jumpToPersionPic();//进入头像
+
+                            break;
+                        case 2:
+                            break;
+                    }
                 }
 
                 if (!flag && event.getClassName().equals("com.tencent.mm.plugin.setting.ui.setting.SettingsModifyNameUI")){
                     String content2 = sharedPreferences.getString(Constant.CONTENTBYNAME, "");
                     inputContentFinishByName(content2);//修改的名称
                 }
+
+                if (!flag && event.getClassName().equals("com.tencent.mm.ui.tools.CropImageNewUI")){
+                   finishPersionPic();//剪切头像
+                }
+
+
 
                 break;
 
@@ -125,10 +159,12 @@ public class AccessibilitySampleService extends AccessibilityService {
                     switch (action){
                         case 0:
                             jumpToPersionMession();//跳进我的信息界面
-                            jumpToPersionName();//跳进昵称界面
+
 
                             break;
                         case 1:
+                            jumpToPersionMession();//跳进我的信息界面
+
                             break;
                         case 2:
                             if (!flag){
@@ -254,6 +290,30 @@ public class AccessibilitySampleService extends AccessibilityService {
     }
 
     /**
+     * 跳进头像界面
+     */
+    private void jumpToPersionPic() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (accessibilityNodeInfo == null){
+                    return;
+                }
+                List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("头像");
+                LogUtil.e("jumpToPersionPic 1 "+list.size());
+                if (list != null && list.size() != 0) {
+                    LogUtil.e("jumpToPersionPic 2");
+                    AccessibilityNodeInfo tempInfo = list.get(0);
+                    if (tempInfo != null && tempInfo.getParent() != null) {
+                        tempInfo.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                    }
+                }
+            }
+        }, TEMP);
+    }
+
+    /**
      * 跳进拍照分享
      */
     private void jumpToTakePhoto() {
@@ -326,6 +386,16 @@ public class AccessibilitySampleService extends AccessibilityService {
 
     private boolean saveMsg() {
         List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("保存");//微信6.6.6版本修改为发表
+        if (performClickBtn(list)) {
+            flag = true;//标记为已发送
+            return true;
+        }
+        return false;
+    }
+
+    //剪切头像
+    private boolean finishPersionPic(){
+        List<AccessibilityNodeInfo> list = accessibilityNodeInfo.findAccessibilityNodeInfosByText("使用");//微信6.6.6版本修改为发表
         if (performClickBtn(list)) {
             flag = true;//标记为已发送
             return true;
@@ -415,7 +485,7 @@ public class AccessibilitySampleService extends AccessibilityService {
      * @param startPicIndex 从第startPicIndex张开始选
      * @param picCount      总共选picCount张
      */
-    private void choosePicture(final int startPicIndex, final int picCount) {
+    private void choosePicture(final int startPicIndex, final int picCount, final int action) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -423,35 +493,77 @@ public class AccessibilitySampleService extends AccessibilityService {
                 if (accessibilityNodeInfo == null) {
                     return;
                 }
-                LogUtil.e("choosePicture 2");
-                List<AccessibilityNodeInfo> accessibilityNodeInfoList = accessibilityNodeInfo.findAccessibilityNodeInfosByText("预览");
+                List<AccessibilityNodeInfo> accessibilityNodeInfoList = new ArrayList<>();
+
+
+                switch (action){
+                    case 1:
+                        accessibilityNodeInfoList = accessibilityNodeInfo.findAccessibilityNodeInfosByText("拍摄照片");
+                        break;
+                    case 2:
+                        accessibilityNodeInfoList = accessibilityNodeInfo.findAccessibilityNodeInfosByText("预览");
+                        break;
+                }
+                LogUtil.e("choosePicture 2  "+accessibilityNodeInfoList.size()+" aaaaaa  "+accessibilityNodeInfoList);
+
 //                List<AccessibilityNodeInfo> accessibilityNodeInfoList = accessibilityNodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/dpf");
 
-                if (accessibilityNodeInfoList == null ||
-                        accessibilityNodeInfoList.size() == 0 ||
-                        accessibilityNodeInfoList.get(0).getParent() == null ||
-                        accessibilityNodeInfoList.get(0).getParent().getChildCount() == 0) {
-                    monitor();
-                    return;
-                }
-                LogUtil.e("choosePicture 3");
-                AccessibilityNodeInfo tempInfo = accessibilityNodeInfoList.get(0).getParent().getChild(3);
 
-                for (int j = startPicIndex; j < startPicIndex + picCount; j++) {
-                    AccessibilityNodeInfo childNodeInfo = tempInfo.getChild(j);
-                    if (childNodeInfo != null) {
-                        for (int k = 0; k < childNodeInfo.getChildCount(); k++) {
-                            if (childNodeInfo.getChild(k).isEnabled() && childNodeInfo.getChild(k).isClickable()) {
-                                childNodeInfo.getChild(k).performAction(AccessibilityNodeInfo.ACTION_CLICK);//选中图片
+
+                switch (action){
+                    case 1:
+                        if (accessibilityNodeInfoList == null ||
+                                accessibilityNodeInfoList.size() == 0 ) {
+                            monitor();
+                            return;
+                        }
+                        AccessibilityNodeInfo tempInfo2 = accessibilityNodeInfoList.get(0).getParent().getParent();
+                        LogUtil.e("choosePicture 3 "+tempInfo2.getChildCount());
+
+                        LogUtil.e("choosePicture 4 "+(startPicIndex+1)+"  "+(startPicIndex + picCount));
+                        for (int i = startPicIndex+1; i < startPicIndex+1 + picCount; i++) {
+                            AccessibilityNodeInfo childNodeInfo = tempInfo2.getChild(i);
+                            LogUtil.e("choosePicture 4"+childNodeInfo);
+                            if (childNodeInfo != null) {
+                                LogUtil.e("choosePicture 5 "+childNodeInfo.getChildCount());
+                                if (childNodeInfo.isEnabled() && childNodeInfo.isClickable()) {
+
+                                    childNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);//选中图片
+                                }
                             }
                         }
-                    }
+
+                        break;
+                    case 2:
+                        if (accessibilityNodeInfoList == null ||
+                                accessibilityNodeInfoList.size() == 0 ||
+                                accessibilityNodeInfoList.get(0).getParent() == null ||
+                                accessibilityNodeInfoList.get(0).getParent().getChildCount() == 0) {
+                            monitor();
+                            return;
+                        }
+                        AccessibilityNodeInfo tempInfo = accessibilityNodeInfoList.get(0).getParent().getChild(3);
+                        LogUtil.e("choosePicture 3"+tempInfo);
+                        for (int j = startPicIndex; j < startPicIndex + picCount; j++) {
+                            AccessibilityNodeInfo childNodeInfo = tempInfo.getChild(j);
+                            if (childNodeInfo != null) {
+                                for (int k = 0; k < childNodeInfo.getChildCount(); k++) {
+                                    if (childNodeInfo.getChild(k).isEnabled() && childNodeInfo.getChild(k).isClickable()) {
+                                        childNodeInfo.getChild(k).performAction(AccessibilityNodeInfo.ACTION_CLICK);//选中图片
+                                    }
+                                }
+                            }
+                        }
+                        LogUtil.e("choosePicture 4");
+                        List<AccessibilityNodeInfo> finishList = accessibilityNodeInfo.findAccessibilityNodeInfosByText("完成(" + picCount + "/9)");//点击确定
+                        performClickBtn(finishList);
+                        break;
                 }
 
 
-                LogUtil.e("choosePicture 4");
-                List<AccessibilityNodeInfo> finishList = accessibilityNodeInfo.findAccessibilityNodeInfosByText("完成(" + picCount + "/9)");//点击确定
-                performClickBtn(finishList);
+
+
+
             }
         }, TEMP);
     }
