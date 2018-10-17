@@ -11,9 +11,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import per.edward.wechatautomationutil.helper.OpenAccessibilitySettingHelper;
 import per.edward.wechatautomationutil.R;
+import per.edward.wechatautomationutil.model.TestModel;
+import per.edward.wechatautomationutil.utils.ChineseUtils;
 import per.edward.wechatautomationutil.utils.Constant;
+import per.edward.wechatautomationutil.utils.JsonUtils;
 
 /**
  * 注意事项
